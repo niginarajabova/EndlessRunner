@@ -74,7 +74,7 @@ public class SegementGenerator : MonoBehaviour
                 {
                     int randomSweet = Random.Range(0, sweetsPrefabs.Length);
                     // Приподнимаем сладость на Y=0.5f, чтобы она красиво висела над землей
-                    GameObject sweet = Instantiate(sweetsPrefabs[randomSweet], new Vector3(laneX, 0.5f, zPos + Random.Range(-15f, 15f)), Quaternion.identity);
+                    GameObject sweet = Instantiate(sweetsPrefabs[randomSweet], new Vector3(laneX, 2f, zPos + Random.Range(-15f, 15f)), Quaternion.identity);
                     
                     // Привязываем сладость к куску дороги, чтобы она тоже удалилась через 30 сек
                     sweet.transform.SetParent(nextSegment.transform);

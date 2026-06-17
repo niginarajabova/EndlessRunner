@@ -38756,11 +38756,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d6be0f6315fe643b7fe7d9ac7e8fb4, type: 3}
---- !u!198 &936867423 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1861285171438723538, guid: f1d6be0f6315fe643b7fe7d9ac7e8fb4, type: 3}
-  m_PrefabInstance: {fileID: 936867422}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &936867424 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3611942839939653414, guid: f1d6be0f6315fe643b7fe7d9ac7e8fb4, type: 3}
@@ -39862,7 +39857,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.122328, y: -0, z: -0, w: 0.9924898}
-  m_LocalPosition: {x: 0, y: 1.44, z: -0.49}
+  m_LocalPosition: {x: 0, y: 5.5, z: 1.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -53199,11 +53194,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4781987089962708877, guid: c71881a0f38e13148a4da26b4c79c687, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -2.09
       objectReference: {fileID: 0}
     - target: {fileID: 4781987089962708877, guid: c71881a0f38e13148a4da26b4c79c687, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.0064363
+      value: 5.43
       objectReference: {fileID: 0}
     - target: {fileID: 4781987089962708877, guid: c71881a0f38e13148a4da26b4c79c687, type: 3}
       propertyPath: m_LocalRotation.w
@@ -68523,7 +68518,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -83, y: 8}
+  m_AnchoredPosition: {x: -83, y: 115.2}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1675336421
@@ -68624,7 +68619,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -162.92236, w: 0}
+  m_margin: {x: 0, y: -11.260925, z: -162.92236, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -83121,7 +83116,7 @@ Transform:
   m_GameObject: {fileID: 1999309766}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.7759, z: -25.289}
+  m_LocalPosition: {x: 0, y: 3.661, z: -25.289}
   m_LocalScale: {x: 0.410367, y: 0.4056387, z: 0.31813}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -83142,28 +83137,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   isGameStarted: 0
-  thief: {fileID: 2141974112}
+  floatingTextPrefab: {fileID: 0}
   startUI: {fileID: 1675336419}
-  sugarParticles: {fileID: 936867423}
-  itemsToDrop:
-  - {fileID: 8820910739656616245, guid: 62cb76f377b95cd4cb1547be5e9647ed, type: 3}
-  - {fileID: 3937574211030701211, guid: 0ad42829bd62ec84bb56d35568976a03, type: 3}
-  - {fileID: 3243311350234601894, guid: ad81ed7d685d84e4397d093582ea01ef, type: 3}
-  - {fileID: 908461819887043408, guid: c7167bda5260b6549bf8734339f92bed, type: 3}
-  - {fileID: 2160131915212143160, guid: ab5773aa6ebb6b240a4eaa094995f179, type: 3}
-  - {fileID: 549649173948368723, guid: c52500080b9c1d3438968f124b03a5d1, type: 3}
-  - {fileID: 3739852197712472845, guid: b7e4145f82c5db64a8fbb65b841f123f, type: 3}
-  - {fileID: 6609468187863097028, guid: c61fa4ccd78f9044d9066be677f25f6a, type: 3}
-  - {fileID: 6748746598757528963, guid: 4639c3f6ac15c484aac95f02805b321c, type: 3}
-  - {fileID: 1493789052565339978, guid: 932693c4a929f89488068ffe043f4066, type: 3}
-  dropInterval: 3
-  playerSpeed: 9
-  maxSpeed: 30
-  acceleration: 0.2
-  sideSpeed: 30
+  playerSpeed: 11
+  maxSpeed: 20
+  acceleration: 0.3
+  sideSpeed: 40
   laneDistance: 4
+  targetX: 0
   jumpForce: 30
   gravity: -100
+  isGrounded: 0
   groundY: 1
   score: 0
   scoreText: {fileID: 1811358037}
@@ -83392,6 +83376,20 @@ MonoBehaviour:
   zPos: 50
   creatingSegment: 0
   segmentLength: 50
+  sweetsPrefabs:
+  - {fileID: 8820910739656616245, guid: 62cb76f377b95cd4cb1547be5e9647ed, type: 3}
+  - {fileID: 3937574211030701211, guid: 0ad42829bd62ec84bb56d35568976a03, type: 3}
+  - {fileID: 3243311350234601894, guid: ad81ed7d685d84e4397d093582ea01ef, type: 3}
+  - {fileID: 908461819887043408, guid: c7167bda5260b6549bf8734339f92bed, type: 3}
+  - {fileID: 2160131915212143160, guid: ab5773aa6ebb6b240a4eaa094995f179, type: 3}
+  - {fileID: 549649173948368723, guid: c52500080b9c1d3438968f124b03a5d1, type: 3}
+  - {fileID: 3739852197712472845, guid: b7e4145f82c5db64a8fbb65b841f123f, type: 3}
+  - {fileID: 6609468187863097028, guid: c61fa4ccd78f9044d9066be677f25f6a, type: 3}
+  - {fileID: 6748746598757528963, guid: 4639c3f6ac15c484aac95f02805b321c, type: 3}
+  - {fileID: 1493789052565339978, guid: 932693c4a929f89488068ffe043f4066, type: 3}
+  obstaclePrefabs:
+  - {fileID: 6572410982818821109, guid: 4cb193ea8c363f14bb7a834e0de701be, type: 3}
+  - {fileID: 279683627134751935, guid: 0b5f8129cb0c9c74baf18c8f77e5319f, type: 3}
 --- !u!4 &2014915268
 Transform:
   m_ObjectHideFlags: 0
@@ -87714,6 +87712,8 @@ GameObject:
   m_Component:
   - component: {fileID: 2141974114}
   - component: {fileID: 2141974113}
+  - component: {fileID: 2141974115}
+  - component: {fileID: 2141974116}
   m_Layer: 0
   m_Name: DoughnutThief
   m_TagString: Untagged
@@ -87733,9 +87733,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1c8ce0879343a4997a6e915d57f831, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThiefLogic
-  amplitude: 0.5
-  frequency: 2
-  rotationSpeed: 50
+  itemsToDrop: []
+  sugarParticles: {fileID: 0}
 --- !u!4 &2141974114
 Transform:
   m_ObjectHideFlags: 0
@@ -87745,13 +87744,54 @@ Transform:
   m_GameObject: {fileID: 2141974112}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.083, y: -2.154, z: 10.07}
+  m_LocalPosition: {x: -0.083, y: 0.61, z: 15.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1296272307}
   m_Father: {fileID: 1999309770}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2141974115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141974112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc533985b09a43842b971b710170e8c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThiefRunner
+  flyHeight: 3.8
+  runDistanceForward: 3.8
+--- !u!54 &2141974116
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141974112}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2142158357
 GameObject:
   m_ObjectHideFlags: 0
@@ -88114,7 +88154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8797082476602742998, guid: 9c022eee83ccafb46b20deeeb94845bf, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.81
+      value: 0.61
       objectReference: {fileID: 0}
     - target: {fileID: 8797082476602742998, guid: 9c022eee83ccafb46b20deeeb94845bf, type: 3}
       propertyPath: m_LocalRotation.w
@@ -88165,7 +88205,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1614875959315870466, guid: 4cb193ea8c363f14bb7a834e0de701be, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.43599987
+      value: 0.35
       objectReference: {fileID: 0}
     - target: {fileID: 1614875959315870466, guid: 4cb193ea8c363f14bb7a834e0de701be, type: 3}
       propertyPath: m_LocalPosition.y
@@ -88173,7 +88213,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1614875959315870466, guid: 4cb193ea8c363f14bb7a834e0de701be, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.41
+      value: 5.6
       objectReference: {fileID: 0}
     - target: {fileID: 1614875959315870466, guid: 4cb193ea8c363f14bb7a834e0de701be, type: 3}
       propertyPath: m_LocalRotation.w

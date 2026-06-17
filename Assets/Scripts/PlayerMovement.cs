@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Сюжет и Старт")]
     public bool isGameStarted = false; 
+    public GameObject floatingTextPrefab;
     public GameObject startUI;       
 
     [Header("Бег и Рывки")]
@@ -85,8 +86,11 @@ public class PlayerMovement : MonoBehaviour
         transform.position = new Vector3(newX, newY, transform.position.z);
     }
 
-    private void OnTriggerEnter(Collider other)
+private void OnTriggerEnter(Collider other)
     {
+        // ЭТА СТРОЧКА КРИЧИТ В КОНСОЛЬ ИМЯ ПРЕПЯТСТВИЯ:
+        Debug.LogError("БЕЗУМНЫЙ ПЕРЕЗАПУСК! Игрок коснулся объекта: " + other.gameObject.name + " с тегом: " + other.tag);
+
         if (other.CompareTag("Obstacle")) 
         {
             playerSpeed = 0; 
@@ -94,26 +98,47 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(HitDelay()); 
         }
         else if (other.CompareTag("Slow")) 
-        {
-            playerSpeed = targetSpeed * 0.3f; 
-            score -= 2;
-            if (score < 0) score = 0; 
-            if (scoreText != null) scoreText.text = "Yummies: " + score;
-        }
+{
+    // Сироп просто временно снижает скорость и забирает вкусняшки
+    playerSpeed = targetSpeed * 0.3f; // Замедляем до 30% от нормальной скорости
+    score -= 2;
+    if (score < 0) score = 0; 
+    if (scoreText != null) scoreText.text = "Yummies: " + score;
+
+    // ВНИМАНИЕ: Если здесь стоит StartCoroutine(HitDelay()); — СОТРИ ЕЁ! 
+    // Эта строчка должна быть ТОЛЬКО в блоке "Obstacle" (для тигра).
+}
         else if (other.CompareTag("Item"))
         {
             ItemData item = other.GetComponent<ItemData>();
-            
+            int pointsAdded = 1; // По умолчанию 1 балл
+
             if (item != null)
             {
-                score += item.scoreValue;
-            }
-            else
-            {
-                score += 1;
+                pointsAdded = item.scoreValue; // Берем индивидуальный балл конфеты
             }
 
-            if (scoreText != null) scoreText.text = "Yummies: " + score;
+            // =================================================================
+            // ВОТ ОНА — СВЯЗЬ С ТВОИМ СЦЕНАРИЕМ ОЧКОВ:
+            // Говорим СкорМенеджеру: "Эй, прибавь вот столько очков!"
+            if (ScoreManager.instance != null)
+            {
+                ScoreManager.instance.AddScore(pointsAdded);
+            }
+            // =================================================================
+
+            // Спавним всплывающий текст +1, +5 и т.д. (если настроен префаб)
+            if (floatingTextPrefab != null)
+            {
+                GameObject textObj = Instantiate(floatingTextPrefab, other.transform.position + Vector3.up * 0.5f, Quaternion.identity);
+                FloatingText floatingTextScript = textObj.GetComponent<FloatingText>();
+                if (floatingTextScript != null)
+                {
+                    floatingTextScript.Setup(pointsAdded);
+                }
+            }
+
+            // Эффекты искр и удаление конфеты с дороги
             if (collectEffectPrefab != null) Instantiate(collectEffectPrefab, other.transform.position, Quaternion.identity);
             Destroy(other.gameObject);
         }

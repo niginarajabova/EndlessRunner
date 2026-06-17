@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class ThiefRunner : MonoBehaviour
 {
-    [Header("Настройки дистанции")]
-    public float runDistanceBack = 50f; // Дистанция впереди игрока
+    [Header("Настройки позиции Пончика")]
+    [Tooltip("На сколько метров ПОДНЯТЬ Пончика вверх")]
+    public float flyHeight = 3f;        
+
+    [Tooltip("На сколько метров ОТОДВИНУТЬ Пончика вперёд от игрока")]
+    public float runDistanceForward = 3f; 
 
     private bool isGameStarted = false;
 
@@ -24,11 +28,12 @@ public class ThiefRunner : MonoBehaviour
 
         if (isGameStarted)
         {
-            // Пончик просто летит впереди игрока на высоте дороги (Y = 0)
-            float targetZ = player.transform.position.z + runDistanceBack;
-            float targetX = Mathf.Lerp(transform.position.x, player.targetX, Time.deltaTime * 5f);
+            // Рассчитываем позицию: летит впереди на runDistanceForward и ВЫСОКО на flyHeight
+            float targetZ = player.transform.position.z + runDistanceForward;
+            float targetX = Mathf.Lerp(transform.position.x, player.targetX, Time.deltaTime * 3f);
             
-            transform.position = new Vector3(targetX, 0f, targetZ);
+            // ИСПРАВЛЕНО: Вместо 0f теперь подставляется flyHeight!
+            transform.position = new Vector3(targetX, flyHeight, targetZ);
         }
     }
 }
