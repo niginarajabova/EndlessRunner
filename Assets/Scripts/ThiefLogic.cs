@@ -1,10 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Ponchik hamrohning hovering animatsiyasi, tilting va particle effektlari.
-/// Bu skript ThiefRunner bilan birga ishlaydi — ThiefRunner pozitsiyani boshqaradi,
-/// ThiefSpawner esa vizual effektlarni (hover, tilt, particles) boshqaradi.
-/// ESLATMA: Bu skript hozircha to'liq realize qilinmagan — itemsToDrop logikasi yo'q.
+/// Ponchik hamrohning hovering animatsiyasi va particle effektlari.
+/// ThiefRunner X/Z pozitsiyani boshqaradi, bu skript faqat Y (hover) va particle boshqaradi.
 /// </summary>
 public class ThiefSpawner : MonoBehaviour
 {
@@ -17,18 +15,19 @@ public class ThiefSpawner : MonoBehaviour
     [Header("Hovering sozlamalari")]
     public float hoverSpeed = 3f;
     public float hoverAmplitude = 0.3f;
-    public float tiltMultiplier = 15f;
+    public float baseHeight = 0.61f;
 
     private PlayerMovement player;
-    private float startRotY;
-    private Vector3 baseLocalPosition;
     private bool initialized = false;
 
     void Start()
     {
-        player = FindObjectOfType<PlayerMovement>();
-        startRotY = transform.localEulerAngles.y;
-        baseLocalPosition = transform.localPosition;
+        player = GetComponentInParent<PlayerMovement>();
+        if (player == null)
+            player = FindObjectOfType<PlayerMovement>();
+
+        // Boshlang'ich local Y ni base height sifatida saqlash
+        baseHeight = transform.localPosition.y;
         initialized = true;
     }
 
@@ -38,23 +37,16 @@ public class ThiefSpawner : MonoBehaviour
         if (!player.isGameStarted) return;
 
         UpdateHover();
-        UpdateTilt();
         UpdateParticles();
     }
 
     private void UpdateHover()
     {
+        // Faqat Y ni boshqarish — X va Z ni ThiefRunner boshqaradi
         float hover = Mathf.Sin(Time.time * hoverSpeed) * hoverAmplitude;
         Vector3 pos = transform.localPosition;
-        pos.y = baseLocalPosition.y + hover;
+        pos.y = baseHeight + hover;
         transform.localPosition = pos;
-    }
-
-    private void UpdateTilt()
-    {
-        // Rotatsiyani boshlang'ich holatda ushlab turish (qiyshaymaslik uchun)
-        Quaternion targetRot = Quaternion.Euler(0, startRotY, 0);
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRot, Time.deltaTime * 10f);
     }
 
     private void UpdateParticles()
