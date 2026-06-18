@@ -3,15 +3,21 @@ using System.Collections;
 
 public class PopUpObstacle : MonoBehaviour
 {
-    public float targetScale = 1f;    
-    public float growSpeed = 4f;      // Скорость появления
-    public float bounciness = 1.4f;   // Насколько сильно раздувается в начале
-    public float shakeAmount = 0.1f;  // Сила "дрожания" желе
-    
+    public float targetScale = 1f;
+    public float growSpeed = 4f;
+    public float bounciness = 1.4f;
+    public float shakeAmount = 0.1f;
+
+    [Header("Debug")]
+    public bool showDebugLogs = false; // Default off — ko'p obstacle bo'lishi mumkin
+
     void Start()
     {
-        // Сразу при появлении запускаем эффект, не дожидаясь игрока
         transform.localScale = Vector3.zero;
+
+        if (showDebugLogs)
+            Debug.Log("[PopUpObstacle] Spawned: " + gameObject.name + " at " + transform.position + " | TargetScale: " + targetScale);
+
         StartCoroutine(AppearWithJelloEffect());
     }
 
@@ -21,7 +27,7 @@ public class PopUpObstacle : MonoBehaviour
         Vector3 finalScale = Vector3.one * targetScale;
         Vector3 overshootScale = finalScale * bounciness;
 
-        // 1. ПЛАВНЫЙ РОСТ (Буп!)
+        // 1. O'sish (overshoot bilan)
         while (t < 1)
         {
             t += Time.deltaTime * growSpeed;
@@ -29,7 +35,7 @@ public class PopUpObstacle : MonoBehaviour
             yield return null;
         }
 
-        // 2. ВОЗВРАТ К НОРМЕ
+        // 2. Normal o'lchamga qaytish
         t = 0;
         while (t < 1)
         {
@@ -38,8 +44,7 @@ public class PopUpObstacle : MonoBehaviour
             yield return null;
         }
 
-        // 3. ЭФФЕКТ ЖЕЛЕ (Дрожание после постановки)
-        // Оно будет покачиваться еще 3 раза, затухая
+        // 3. Jele titroq effekti
         for (int i = 0; i < 3; i++)
         {
             float duration = 0.2f;
@@ -52,8 +57,7 @@ public class PopUpObstacle : MonoBehaviour
                 transform.localScale = Vector3.Lerp(transform.localScale, wobbleScale, elapsed / duration);
                 yield return null;
             }
-            
-            // В обратную сторону
+
             elapsed = 0;
             while (elapsed < duration)
             {
@@ -62,7 +66,10 @@ public class PopUpObstacle : MonoBehaviour
                 yield return null;
             }
         }
-        
-        transform.localScale = finalScale; // Фиксируем финальный размер
+
+        transform.localScale = finalScale;
+
+        if (showDebugLogs)
+            Debug.Log("[PopUpObstacle] Animation complete: " + gameObject.name);
     }
 }

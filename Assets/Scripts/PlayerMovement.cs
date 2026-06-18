@@ -17,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     public float sideSpeed = 30f;
     public float laneDistance = 4f;
     public float targetX = 0f;
-    private int currentLane = 0; // -1 chap, 0 markaz, 1 o'ng
+    private int currentLane = 0;
 
     [Header("Jump")]
     public float jumpForce = 40f;
@@ -29,6 +29,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Effects")]
     public GameObject collectEffectPrefab;
 
+    [Header("Debug")]
+    public bool showDebugLogs = true;
+
     void Start()
     {
         targetSpeed = playerSpeed;
@@ -36,19 +39,23 @@ public class PlayerMovement : MonoBehaviour
         currentLane = 0;
         targetX = 0f;
         transform.position = new Vector3(transform.position.x, groundY, transform.position.z);
+
+        if (showDebugLogs)
+            Debug.Log("[PlayerMovement] Initialized. Position: " + transform.position + " | GroundY: " + groundY + " | Speed: " + playerSpeed);
+    }
+
+    public void StartGame()
+    {
+        isGameStarted = true;
+        if (startUI != null) startUI.SetActive(false);
+
+        if (showDebugLogs)
+            Debug.Log("[PlayerMovement] Game Started!");
     }
 
     void Update()
     {
-        if (!isGameStarted)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                isGameStarted = true;
-                if (startUI != null) startUI.SetActive(false);
-            }
-            return;
-        }
+        if (!isGameStarted) return;
 
         UpdateSpeed();
         UpdateLaneInput();
@@ -75,6 +82,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentLane--;
                 targetX = currentLane * laneDistance;
+
+                if (showDebugLogs)
+                    Debug.Log("[PlayerMovement] Lane Change LEFT → Lane: " + currentLane + " | TargetX: " + targetX);
             }
         }
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
@@ -83,6 +93,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentLane++;
                 targetX = currentLane * laneDistance;
+
+                if (showDebugLogs)
+                    Debug.Log("[PlayerMovement] Lane Change RIGHT → Lane: " + currentLane + " | TargetX: " + targetX);
             }
         }
     }
@@ -97,6 +110,9 @@ public class PlayerMovement : MonoBehaviour
             {
                 yVelocity = jumpForce;
                 isGrounded = false;
+
+                if (showDebugLogs)
+                    Debug.Log("[PlayerMovement] JUMP! Force: " + jumpForce);
             }
         }
         else
@@ -118,12 +134,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.CompareTag("Obstacle"))
         {
+            if (showDebugLogs)
+                Debug.Log("[PlayerMovement] HIT OBSTACLE: " + other.gameObject.name + " at " + other.transform.position);
+
             playerSpeed = 0;
             targetSpeed = 0;
             StartCoroutine(HitDelay());
         }
         else if (other.CompareTag("Slow"))
         {
+            if (showDebugLogs)
+                Debug.Log("[PlayerMovement] HIT SLOW: " + other.gameObject.name + " | Speed reduced to: " + (targetSpeed * 0.3f));
+
             playerSpeed = targetSpeed * 0.3f;
 
             if (ScoreManager.instance != null)
@@ -133,6 +155,9 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (other.CompareTag("Item"))
         {
+            if (showDebugLogs)
+                Debug.Log("[PlayerMovement] COLLECT ITEM: " + other.gameObject.name + " at " + other.transform.position);
+
             CollectItem(other.gameObject);
         }
     }
@@ -147,13 +172,18 @@ public class PlayerMovement : MonoBehaviour
             pointsAdded = item.scoreValue;
         }
 
-        // ScoreManager orqali ball qo'shish
+        if (showDebugLogs)
+            Debug.Log("[PlayerMovement] Points added: +" + pointsAdded + " | ItemData found: " + (item != null));
+
         if (ScoreManager.instance != null)
         {
             ScoreManager.instance.AddScore(pointsAdded);
         }
+        else if (showDebugLogs)
+        {
+            Debug.LogWarning("[PlayerMovement] ScoreManager.instance is NULL! Score not added.");
+        }
 
-        // Floating text effekti
         if (floatingTextPrefab != null)
         {
             GameObject textObj = Instantiate(floatingTextPrefab,
@@ -165,7 +195,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Yig'ish effekti
         if (item != null && item.collectEffect != null)
         {
             Renderer rend = itemObject.GetComponentInChildren<Renderer>();
@@ -188,6 +217,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameOver()
     {
+        if (showDebugLogs)
+            Debug.Log("[PlayerMovement] GAME OVER! Restarting in 2 seconds...");
+
         isGameStarted = false;
         playerSpeed = 0;
         Invoke(nameof(RestartLevel), 2f);
@@ -195,6 +227,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void RestartLevel()
     {
+        if (showDebugLogs)
+            Debug.Log("[PlayerMovement] Restarting scene: " + SceneManager.GetActiveScene().name);
+
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

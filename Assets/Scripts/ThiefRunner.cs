@@ -12,6 +12,9 @@ public class ThiefRunner : MonoBehaviour
     [Tooltip("Ponchik uchish balandligi (local Y)")]
     public float flyHeight = 3.8f;
 
+    [Header("Debug")]
+    public bool showDebugLogs = true;
+
     private PlayerMovement player;
     private bool isGameStarted = false;
 
@@ -23,6 +26,13 @@ public class ThiefRunner : MonoBehaviour
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = true;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("[ThiefRunner] Initialized. Player found: " + (player != null) + " | LocalPos: " + transform.localPosition);
+            if (player == null)
+                Debug.LogWarning("[ThiefRunner] PlayerMovement NOT found! Donut won't follow.");
+        }
     }
 
     void Update()
@@ -32,21 +42,17 @@ public class ThiefRunner : MonoBehaviour
         if (!isGameStarted && player.isGameStarted)
         {
             isGameStarted = true;
+
+            if (showDebugLogs)
+                Debug.Log("[ThiefRunner] Game started — Donut begins following player.");
         }
 
         if (!isGameStarted) return;
 
-        // DoughnutThief Player ning CHILD obyekti — shuning uchun LOCAL position ishlatamiz
-        // Parent (Player) allaqachon Z bo'ylab harakatlanadi, biz faqat offset beramiz
         float localZ = runDistanceForward;
-
-        // X pozitsiya: Player ning targetX ni local ga aylantirish
-        // Parent position.x = player hozirgi X, targetX = mo'ljallangan X
-        // Local X = targetX - parent.position.x (ya'ni parent ga nisbatan qancha offset)
         float targetLocalX = player.targetX - player.transform.position.x;
         float currentLocalX = Mathf.Lerp(transform.localPosition.x, targetLocalX, Time.deltaTime * followSmoothing);
 
-        // Y ni ThiefSpawner boshqaradi, biz faqat X va Z ni o'rnatamiz
         transform.localPosition = new Vector3(currentLocalX, transform.localPosition.y, localZ);
     }
 }

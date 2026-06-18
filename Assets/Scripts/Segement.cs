@@ -16,9 +16,19 @@ public class SegementGenerator : MonoBehaviour
 
     private PlayerMovement playerScript; 
 
+    [Header("Debug")]
+    [SerializeField] bool showDebugLogs = true;
+
     void Start()
     {
         playerScript = GameObject.FindObjectOfType<PlayerMovement>();
+
+        if (showDebugLogs)
+        {
+            Debug.Log("[SegementGenerator] Initialized. Player found: " + (playerScript != null));
+            Debug.Log("[SegementGenerator] Segments: " + segment.Length + " | Sweets: " + (sweetsPrefabs != null ? sweetsPrefabs.Length : 0) + " | Obstacles: " + (obstaclePrefabs != null ? obstaclePrefabs.Length : 0));
+            Debug.Log("[SegementGenerator] StartZ: " + zPos + " | SegmentLength: " + segmentLength);
+        }
     }
 
     void Update()
@@ -35,20 +45,19 @@ public class SegementGenerator : MonoBehaviour
     
     IEnumerator SegmentGen()
     {
-        // 1. ТВОЙ СТАРЫЙ КОД: Выбираем и создаем сегмент дороги на высоте 0
         int segmentNum = Random.Range(0, segment.Length);
         GameObject nextSegment = Instantiate(segment[segmentNum], new Vector3(0, 0, zPos), Quaternion.identity);
         
-        // 2. ТВОЙ СТАРЫЙ КОД: Удаляем сегмент через 30 секунд
         Destroy(nextSegment, 30f); 
 
-        // =================================================================
-        // НОВАЯ МАГИЯ: Спавним объекты внутри созданного сегмента
-        // Распределяем по трем полосам: левая (-4), центр (0), правая (4)
-        float[] lanes = new float[] { -4f, 0f, 4f };
+        if (showDebugLogs)
+            Debug.Log("[SegementGenerator] New segment #" + segmentNum + " at Z: " + zPos);
 
-        // Случайно выбираем полосу, на которой будет стоять Опасность (Тигр)
+        float[] lanes = new float[] { -4f, 0f, 4f };
         int obstacleLaneIndex = Random.Range(0, lanes.Length);
+
+        if (showDebugLogs)
+            Debug.Log("[SegementGenerator] Obstacle on lane index: " + obstacleLaneIndex + " (X: " + lanes[obstacleLaneIndex] + ")");
 
         for (int i = 0; i < lanes.Length; i++)
         {
@@ -56,34 +65,32 @@ public class SegementGenerator : MonoBehaviour
 
             if (i == obstacleLaneIndex)
             {
-                // Если это полоса для тигра — спавним ПРЕПЯТСТВИЕ
                 if (obstaclePrefabs != null && obstaclePrefabs.Length > 0)
                 {
                     int randomObstacle = Random.Range(0, obstaclePrefabs.Length);
-                    // Спавним на высоте дороги (Y=0) со случайным небольшим сдвигом вперед/назад
-                    GameObject obs = Instantiate(obstaclePrefabs[randomObstacle], new Vector3(laneX, 0f, zPos + Random.Range(-10f, 10f)), Quaternion.identity);
-                    
-                    // Чтобы тигр удалялся ВМЕСТЕ с дорогой, делаем его "ребенком" этого сегмента
+                    float zOffset = Random.Range(5f, segmentLength - 5f);
+                    GameObject obs = Instantiate(obstaclePrefabs[randomObstacle], new Vector3(laneX, 0f, zPos + zOffset), Quaternion.identity);
                     obs.transform.SetParent(nextSegment.transform);
+
+                    if (showDebugLogs)
+                        Debug.Log("[SegementGenerator] Obstacle: " + obstaclePrefabs[randomObstacle].name + " at (" + laneX + ", 0, " + (zPos + zOffset) + ")");
                 }
             }
             else
             {
-                // На остальных двух полосах спавним СЛАДОСТИ (Тут тигра точно не будет!)
                 if (sweetsPrefabs != null && sweetsPrefabs.Length > 0)
                 {
                     int randomSweet = Random.Range(0, sweetsPrefabs.Length);
-                    // Приподнимаем сладость на Y=0.5f, чтобы она красиво висела над землей
-                    GameObject sweet = Instantiate(sweetsPrefabs[randomSweet], new Vector3(laneX, 2f, zPos + Random.Range(-15f, 15f)), Quaternion.identity);
-                    
-                    // Привязываем сладость к куску дороги, чтобы она тоже удалилась через 30 сек
+                    float zOffset = Random.Range(5f, segmentLength - 5f);
+                    GameObject sweet = Instantiate(sweetsPrefabs[randomSweet], new Vector3(laneX, 2f, zPos + zOffset), Quaternion.identity);
                     sweet.transform.SetParent(nextSegment.transform);
+
+                    if (showDebugLogs)
+                        Debug.Log("[SegementGenerator] Sweet: " + sweetsPrefabs[randomSweet].name + " at (" + laneX + ", 2, " + (zPos + zOffset) + ")");
                 }
             }
         }
-        // =================================================================
-
-        // 3. ТВОЙ СТАРЫЙ КОД: Сдвигаем позицию для следующего куска
+        // Keyingi segment uchun pozitsiyani surish
         zPos += segmentLength;
         yield return new WaitForSeconds(0.1f);
         creatingSegment = false;

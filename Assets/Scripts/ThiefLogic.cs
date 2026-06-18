@@ -17,6 +17,9 @@ public class ThiefSpawner : MonoBehaviour
     public float hoverAmplitude = 0.3f;
     public float baseHeight = 0.61f;
 
+    [Header("Debug")]
+    public bool showDebugLogs = true;
+
     private PlayerMovement player;
     private bool initialized = false;
 
@@ -26,9 +29,14 @@ public class ThiefSpawner : MonoBehaviour
         if (player == null)
             player = FindObjectOfType<PlayerMovement>();
 
-        // Boshlang'ich local Y ni base height sifatida saqlash
         baseHeight = transform.localPosition.y;
         initialized = true;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("[ThiefSpawner] Initialized. Player found: " + (player != null) + " | BaseHeight: " + baseHeight);
+            Debug.Log("[ThiefSpawner] SugarParticles assigned: " + (sugarParticles != null));
+        }
     }
 
     void Update()
@@ -42,7 +50,6 @@ public class ThiefSpawner : MonoBehaviour
 
     private void UpdateHover()
     {
-        // Faqat Y ni boshqarish — X va Z ni ThiefRunner boshqaradi
         float hover = Mathf.Sin(Time.time * hoverSpeed) * hoverAmplitude;
         Vector3 pos = transform.localPosition;
         pos.y = baseHeight + hover;
