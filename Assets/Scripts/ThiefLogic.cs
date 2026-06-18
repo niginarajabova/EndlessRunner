@@ -1,39 +1,63 @@
 using UnityEngine;
 
+/// <summary>
+/// Ponchik hamrohning hovering animatsiyasi, tilting va particle effektlari.
+/// Bu skript ThiefRunner bilan birga ishlaydi — ThiefRunner pozitsiyani boshqaradi,
+/// ThiefSpawner esa vizual effektlarni (hover, tilt, particles) boshqaradi.
+/// ESLATMA: Bu skript hozircha to'liq realize qilinmagan — itemsToDrop logikasi yo'q.
+/// </summary>
 public class ThiefSpawner : MonoBehaviour
 {
-    [Header("Рассыпание сладостей")]
+    [Header("Shirinliklarni tashlash (hozircha ishlatilmaydi)")]
     public GameObject[] itemsToDrop;
 
-    [Header("Частицы")]
+    [Header("Particle effekti")]
     public ParticleSystem sugarParticles;
 
-    private float laneDistance = 4f;
-    private float groundY = 1.0f;
-    private float startThiefZ;
-    private float startThiefRotY;
-    private Vector3 startThiefScale;
+    [Header("Hovering sozlamalari")]
+    public float hoverSpeed = 3f;
+    public float hoverAmplitude = 0.3f;
+    public float tiltMultiplier = 15f;
 
-    void UpdateThiefPosition(PlayerMovement player)
+    private PlayerMovement player;
+    private float startRotY;
+    private Vector3 baseLocalPosition;
+    private bool initialized = false;
+
+    void Start()
     {
-        float hover = Mathf.Sin(Time.time * 3f) * 0.3f;
-        float dynamicZ = startThiefZ + Mathf.Sin(Time.time * 0.7f) * 2.5f;
-        float thiefX = Mathf.Lerp(transform.localPosition.x, player.targetX, Time.deltaTime * 5f);
-        
-        transform.localPosition = new Vector3(thiefX, 2.5f + hover, dynamicZ);
-        transform.localScale = startThiefScale;
-
-        if (!player.isGrounded)
-            transform.Rotate(Vector3.right, 500f * Time.deltaTime);
-        else
-        {
-            float tilt = (player.targetX - transform.localPosition.x) * 15f;
-            Quaternion targetRot = Quaternion.Euler(0, startThiefRotY, tilt);
-            transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRot, Time.deltaTime * 10f);
-        }
+        player = FindObjectOfType<PlayerMovement>();
+        startRotY = transform.localEulerAngles.y;
+        baseLocalPosition = transform.localPosition;
+        initialized = true;
     }
 
-    void UpdateParticles(PlayerMovement player)
+    void Update()
+    {
+        if (!initialized || player == null) return;
+        if (!player.isGameStarted) return;
+
+        UpdateHover();
+        UpdateTilt();
+        UpdateParticles();
+    }
+
+    private void UpdateHover()
+    {
+        float hover = Mathf.Sin(Time.time * hoverSpeed) * hoverAmplitude;
+        Vector3 pos = transform.localPosition;
+        pos.y = baseLocalPosition.y + hover;
+        transform.localPosition = pos;
+    }
+
+    private void UpdateTilt()
+    {
+        // Rotatsiyani boshlang'ich holatda ushlab turish (qiyshaymaslik uchun)
+        Quaternion targetRot = Quaternion.Euler(0, startRotY, 0);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, targetRot, Time.deltaTime * 10f);
+    }
+
+    private void UpdateParticles()
     {
         if (sugarParticles != null)
         {
