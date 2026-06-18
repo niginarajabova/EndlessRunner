@@ -132,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Faqat tanilgan tag larni qayta ishlash — noma'lum tag lar ignore qilinadi
         if (other.CompareTag("Obstacle"))
         {
             if (showDebugLogs)
@@ -159,6 +160,12 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log("[PlayerMovement] COLLECT ITEM: " + other.gameObject.name + " at " + other.transform.position);
 
             CollectItem(other.gameObject);
+        }
+        else
+        {
+            // Noma'lum tag — ehtimol dekoratsiya (CandyBush va h.k.) — IGNORE
+            if (showDebugLogs)
+                Debug.LogWarning("[PlayerMovement] UNKNOWN TAG collision ignored: '" + other.tag + "' on object: " + other.gameObject.name);
         }
     }
 
